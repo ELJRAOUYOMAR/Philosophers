@@ -9,6 +9,7 @@
  *
  * prototype: int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                    void *(*start_routine)(void *), void *arg);
+ * @thread: Pointer to a pthread_t variable to store the thread ID.
  * @attr: Pointer to a pthread_attr_t structure for thread attributes (e.g., stack size, priority). Use NULL for default attributes.
  * @start_routine: Pointer to the function the thread will execute. It must return void * and take a void * argument.
  * @arg: Argument passed to the start_routine.
@@ -38,7 +39,7 @@ int main()
     res = pthread_join(thread_id, NULL);
     printf("res in joined = %d\n", res);
     if (res != 0)
-    return (fprintf(stderr, "thread join failed%d\n", res), 1);
+        return (fprintf(stderr, "thread join failed%d\n", res), 1);
 
     printf("thread has finished, main thead exiting.\n");
     return 0;
