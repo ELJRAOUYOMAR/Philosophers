@@ -80,3 +80,14 @@ will print its death.
 - Each thread is executing the same program code and shares the same data area and heap.
 - each thread has it own stack containing local variables and function call linkage information.
 - Threads can communicate with each other via the global variables that they share.
+
+## Race condition
+A race condition happens when two or more processes or threads access shared data at the same time, and the final outcome depends on the timing of their execution. If not handled properly, it can lead to unexpected or incorrect behavior.
+#### Example:
+Two threads try to increase a counter:
+- Thread ```A``` reads value ```5```
+- Thread ```B``` reads value ```5```
+- Both add ```1``` → get ```6```
+- Both write ```6``` → final value is ```6```, but it should be ```7```
+To prevent this, we use synchronization techniques like ```mutexes``` or ```semaphores```.
+

@@ -17,7 +17,7 @@ int main()
 
     if (pthread_create(&t1, NULL, &routine, NULL))
         return 1;
-    if (pthread_create(&t2, NULL, &routine, NULL))
+    if (pthread_create(&t2, NULL, routine, NULL))
         return 1;
     
     if (pthread_join(t1, NULL))
