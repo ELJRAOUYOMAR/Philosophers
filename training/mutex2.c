@@ -9,6 +9,10 @@ void *worker(void *arg)
 {
     pthread_mutex_lock(&lock);
     printf("thread %s: in critical section\n", (char *)arg);
+    while (1)
+    {
+        sleep(1);
+    }
     pthread_mutex_unlock(&lock);
     return arg;
 }
@@ -21,6 +25,7 @@ int main()
     pthread_create(&t1, NULL, worker, (void *)n1);
     pthread_create(&t2, NULL, worker, n2);
 
+    sleep(2);
     pthread_join(t1, NULL);
     pthread_join(t2, NULL);
 
