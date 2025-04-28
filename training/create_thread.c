@@ -21,17 +21,17 @@ void *thread_function(void *arg);
 int main()
 {
     pthread_t thread_id;
-    char *msg = "this is a thread";
+    char *msg = "this is a thread form the second thread";
 
     // create new thread
     int res = pthread_create(&thread_id, NULL, thread_function, (void *)msg);
     if (res != 0)
-    return (fprintf(stderr, "thread creation failed%d\n", res), 1);
+    return (fprintf(stderr, "thread creation failed , %d\n", res), 1);
 
     // main thread does some works
     for (int i = 0; i < 3; i++)
     {
-        printf("Main thread: working... (Iteration %d)\n", i + 1);
+        printf("Main thread: working. (Iteration %d)\n", i + 1);
         sleep(1);
     }
 

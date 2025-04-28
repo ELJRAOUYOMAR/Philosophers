@@ -30,14 +30,20 @@ int main()
     
     printf("Main thread: Created detached thread with 1MB stack\n");
 
+    // if (pthread_join(thread_id, NULL) != 0) // A detached thread runs independently and cannot be joined by another thread.
+    // {
+    //     printf("thread join failed\n");
+    //     return 1;
+    // }
     // wait for thread to run 
     sleep(1);
-    
+    printf("thread finished\n");
     return 0;
 }
 
 void *thread_running(__attribute__((unused))void *arg)
 {
+    // sleep(2);
     printf("thread is running...\n");
     return NULL;
 }
