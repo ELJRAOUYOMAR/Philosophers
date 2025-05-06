@@ -5,7 +5,6 @@
  * 
  * Return:  Current timestamp in milliseconds, or -1 on error
  */
-
 long long get_time()
 {
     struct timeval tv;
@@ -43,5 +42,12 @@ void precise_sleep(long long time_sleep_in_ms)
     start = get_time();
     if (start == -1)
         return ;
-    
+    while (1)
+    {
+        current = get_time();
+        if (current == -1 || time_diff(start, current) >= time_sleep_in_ms)
+            break ;
+        usleep(500); // sleep in short for more precision    
+    }
+
 }

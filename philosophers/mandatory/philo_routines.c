@@ -14,12 +14,17 @@ void *philosopher_routine(void *arg)
     philo = (t_philo *)arg;
     // if odd numbered philosopher, delay start to prevent deadlock
     if (philo->id % 2 == 1)
-        precise_sleep(philo->data->time_to_eat / 2);
+        precise_sleep(philo->data->time_to_eat);
     while (!simulation_finished(philo->data))
     {
         take_forks(philo);
         eat(philo);
+        put_down_forks(philo);
+        print_status(philo->data, philo->id, SLEEPING);
+        precise_sleep(philo->data->time_to_sleep);
+        print_status(philo->data, philo->id, THINKING);
     }
+    return (NULL);
 }
 
 /**
@@ -52,9 +57,7 @@ void take_forks(t_philo *philo)
  * eat - handle philosopher eating action
  * 
  * @philo: Pointer to philosopher data
- */
-
-void eat(t_philo *philo)
+ */void eat(t_philo *philo)
 {
     t_data *data;
     
@@ -63,9 +66,22 @@ void eat(t_philo *philo)
     philo->last_meal_time = get_time();
     pthread_mutex_unlock(&data->meal_lock);
     print_status(data, philo->id, EATING);
-    precise_sleep(data->time_to_sleep);
+    precise_sleep(data->time_to_eat);
     pthread_mutex_lock(&data->meal_lock);
     philo->meals_eaten++;
     pthread_mutex_unlock(&data->meal_lock);
 }
 
+/**
+ * put_down_forks - handle philosopher putting down forks
+ * 
+ * @philo: Pointer to philosopher data
+ */
+void put_down_forks(t_philo *philo)
+{
+    t_data *data;
+    
+    data = philo->data;
+    pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
+    pthread_mutex_unlock(&data->forks[philo->right_fork_id]);
+}

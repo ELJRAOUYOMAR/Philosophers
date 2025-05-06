@@ -50,19 +50,22 @@ int init_mutexes(t_data *data)
 
     data->forks = malloc(sizeof(pthread_mutex_t) * data->num_philos);
     if (!data || !data->forks)
+    {
+        printf(ERR_MALLOC);
         return (1);
+    }
     i = 0;
     while (i < data->num_philos)
     {
-        if (pthread_mutex_init(&data->forks[i], NULL))
+        if (pthread_mutex_init(&data->forks[i], NULL) != 0)
             return (1);
         i++;
     }
-    if (pthread_mutex_init(&data->write_lock, NULL))
+    if (pthread_mutex_init(&data->write_lock, NULL) != 0)
             return (1);
-    if (pthread_mutex_init(&data->meal_lock, NULL))
+    if (pthread_mutex_init(&data->meal_lock, NULL) != 0)
         return (1);
-    if (pthread_mutex_init(&data->end_lock, NULL))
+    if (pthread_mutex_init(&data->end_lock, NULL) != 0)
         return (1);
     return (0);
 }

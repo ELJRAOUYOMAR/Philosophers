@@ -16,13 +16,13 @@ int main(int ac, char **av)
 		return (1);
 	if (init_data(&data, ac, av))
 		return (1);
-	// if (init_mutexes(&data))
-	// 	return (error_exit(ERR_MUTEX, &data));
-	// if (init_philosophers(&data))
-	// 	return (error_exit(ERR_MALLOC, &data));
-	// if (start_simulation(&data))
-	// 	return (error_exit(ERR_THREAD, &data));
-	// join_threads(&data);
-	// cleanup(&data);
+	if (init_mutexes(&data))
+		return (error_exit(ERR_MUTEX, &data));
+	if (init_philosophers(&data))
+		return (error_exit(ERR_MALLOC, &data));
+	if (start_simulation(&data))
+		return (error_exit(ERR_THREAD, &data));
+	join_threads(&data);
+	cleanup(&data);
 	return (0);
 }

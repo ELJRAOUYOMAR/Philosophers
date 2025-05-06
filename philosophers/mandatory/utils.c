@@ -24,8 +24,8 @@ int ft_atoi(char *str)
             return (-1);
         i++;
     }
-    if (str[i] != '\0')
-        return (-1);
+    // if (str[i] != '\0')
+    //     return (-1);
     return (result * sign);
 }
 
@@ -62,4 +62,44 @@ int check_args(int ac, char **av)
         i++;
     }
     return (0);
+}
+
+/**
+ * Print philosopher status with timestamp
+ * 
+ * @data: Pointer to data structure
+ * @id: Philosopher ID
+ * @status: Status message to print
+ */
+
+void    print_status(t_data *data, int id, char *status)
+{
+    long long current_time;
+
+    pthread_mutex_lock(&data->write_lock);
+    if (!simulation_finished(data))
+    {
+        current_time = get_time();
+        if (current_time != 1)
+        {
+            printf("%lld %d %s",
+                time_diff(data->start_time, current_time), id, status);
+        }
+    }
+    pthread_mutex_unlock(&data->write_lock);
+}
+
+/**
+ * Print error message and clean up resources
+ * 
+ * @msg: Error message to print
+ * @data: Pointer to data structure
+ * Return: 1 (error code)
+ */
+
+int error_exit(char *message, t_data *data)
+{
+    printf("Error : %s\n", message);
+    cleanup(data);
+    return (1);
 }
