@@ -82,7 +82,7 @@ void    print_status(t_data *data, int id, char *status)
         current_time = get_time();
         if (current_time != 1)
         {
-            printf("%lld %d %s",
+            printf("%lld %d %s\n",
                 time_diff(data->start_time, current_time), id, status);
         }
     }

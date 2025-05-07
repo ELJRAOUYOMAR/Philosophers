@@ -37,6 +37,17 @@ void take_forks(t_philo *philo)
     t_data  *data;
 
     data = philo->data;
+    if (data->num_philos == 1)
+    {
+        // Single philosopher: take one fork and wait to die
+        pthread_mutex_lock(&data->forks[philo->left_fork_id]);
+        print_status(data, philo->id, TAKEN_FORK);
+        // Don't try to take a second fork; just wait
+        while (!simulation_finished(data))
+            usleep(100);
+        pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
+        return;
+    }
     if (philo->left_fork_id < philo->right_fork_id)
     {
         pthread_mutex_lock(&data->forks[philo->left_fork_id]);
@@ -57,7 +68,8 @@ void take_forks(t_philo *philo)
  * eat - handle philosopher eating action
  * 
  * @philo: Pointer to philosopher data
- */void eat(t_philo *philo)
+ */
+void eat(t_philo *philo)
 {
     t_data *data;
     

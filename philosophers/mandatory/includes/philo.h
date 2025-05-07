@@ -17,11 +17,11 @@
 # define ERR_THREAD      "Thread creation failed\n"
 
 /* Status messages */
-# define TAKEN_FORK      "has taken a fork\n"
-# define EATING          "is eating\n"
-# define SLEEPING        "is sleeping\n"
-# define THINKING        "is thinking\n"
-# define DIED            "died\n"
+# define TAKEN_FORK      "has taken a fork"
+# define EATING          "is eating"
+# define SLEEPING        "is sleeping"
+# define THINKING        "is thinking"
+# define DIED            "died"
 
 typedef struct s_philo
 {

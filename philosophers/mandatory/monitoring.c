@@ -22,7 +22,8 @@ void *monitor_routine(void *arg)
             data->simulation_end = 1;
             pthread_mutex_unlock(&data->end_lock);
         }
-        usleep(1000); // sleep 1ms to prevent high CPU usage
+        // usleep(1000);
+        usleep(data->time_to_die / 10);  // sleep to prevent high CPU usage
     }
     return (NULL);
 }
@@ -67,6 +68,10 @@ int	check_death(t_data *data, int *i)
  * 
  * @data: Pointer to simulation data
  * Return: 1 if all have eaten enough, 0 otherwise
+ * 
+ * The meal_lock mutex protects two important variables:
+    - last_meal_time: Used by the monitor thread to check for starvation
+    - meals_eaten: Used to track when all philosophers have eaten enough
  */
 
 int check_each_philo_eat(t_data *data)
