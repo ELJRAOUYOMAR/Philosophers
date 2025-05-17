@@ -1,0 +1,9 @@
+Create two threads (Thread A and Thread B). Each thread prints a message like a ping-pong game, taking turns printing:
+example:
+Ping from A
+Pong from B
+Ping from A
+Pong from B
+...
+
+You should repeat this exchange N times (e.g., 5 times).

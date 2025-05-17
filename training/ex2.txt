@@ -1,0 +1,4 @@
+Use 2 threads to compute the factorial of a number N.
+- One thread multiplies the first half of the range (from 1 to N/2).
+- The other thread multiplies the second half (from N/2 + 1 to N).
+- The main thread combines the two results to get the final factorial.

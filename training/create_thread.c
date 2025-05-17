@@ -10,8 +10,10 @@
  * prototype: int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                    void *(*start_routine)(void *), void *arg);
  * @thread: Pointer to a pthread_t variable to store the thread ID.
- * @attr: Pointer to a pthread_attr_t structure for thread attributes (e.g., stack size, priority). Use NULL for default attributes.
- * @start_routine: Pointer to the function the thread will execute. It must return void * and take a void * argument.
+ * @attr: Pointer to a pthread_attr_t structure for thread 
+    attributes (e.g., stack size, priority). Use NULL for default attributes.
+ * @start_routine: Pointer to the function the thread
+    will execute. It must return void * and take a void * argument.
  * @arg: Argument passed to the start_routine.
  * 
  * Return : Returns 0 on success, or an error code on failure.
@@ -26,7 +28,7 @@ int main()
     // create new thread
     int res = pthread_create(&thread_id, NULL, thread_function, (void *)msg);
     if (res != 0)
-    return (fprintf(stderr, "thread creation failed , %d\n", res), 1);
+        return (fprintf(stderr, "thread creation failed , %d\n", res), 1);
 
     // main thread does some works
     for (int i = 0; i < 3; i++)

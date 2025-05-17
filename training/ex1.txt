@@ -1,0 +1,14 @@
+Create a multithreaded program that calculates the sum of an array of integers using 2 threads. Each thread should sum half of the array, and the main thread should combine the results.
+📋 Requirements:
+Use only:
+
+    -pthread_create
+
+    -pthread_join
+
+- Split the array into 2 halves
+
+- Each thread computes the sum of its half
+
+- Main thread combines the results and prints the final sum
+
