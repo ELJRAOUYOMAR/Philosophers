@@ -18,15 +18,15 @@ int main()
         printf("Error: creating the first thread");
         return 1;
     }
-    if (pthread_join(id1, NULL) != 0)
-    {
-        printf("Error: joining the first thread");
-        return 1;
-    }
-
     if ((pthread_create(&id2, NULL, half_two, NULL) != 0))
     {
         printf("Error: creating the first thread");
+        return 1;
+    }
+
+    if (pthread_join(id1, NULL) != 0)
+    {
+        printf("Error: joining the first thread");
         return 1;
     }
     if (pthread_join(id2, NULL) != 0)
@@ -35,7 +35,7 @@ int main()
         return 1;
     }
     final_some = sum1 + sum2;
-    printf("Some of the elements is: %d", final_some);
+    printf("Some of the elements is: %d\n", final_some);
 }
 
 void    *half_one(__attribute__((unused))void *arg)

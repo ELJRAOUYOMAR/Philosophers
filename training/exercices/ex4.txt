@@ -1,0 +1,9 @@
+Sum of Array Elements in Threads
+
+✅ Objective:
+You are given an array of integers. Write a program that:
+1. Splits the array into two halves.
+2. Creates two threads.
+3. Each thread computes the sum of its half and returns the result.
+4. The main thread joins both threads and uses the second parameter of pthread_join to collect the two partial sums.
+5. The main thread prints the total sum of the array.
