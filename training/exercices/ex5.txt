@@ -1,0 +1,8 @@
+Create two threads, each incrementing a shared counter 1 million times. Use a mutex to protect the counter from race conditions.
+
+✅ Requirements:
+- Use pthread_create, pthread_join
+- Use pthread_mutex_t
+- Final result must be exactly 2 million
+💡 Expected Output:
+Final counter value: 2000000

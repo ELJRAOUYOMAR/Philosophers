@@ -1,0 +1,14 @@
+🎯 Goal:
+Simulate two people withdrawing from the same bank account.
+- Initial balance: 1000
+- Each thread attempts to withdraw 700
+- Protect balance updates with a mutex
+- Only allow a withdrawal if the balance is sufficient
+
+✅ Requirements:
+- Use a mutex to prevent race conditions
+- Print whether the withdrawal succeeded or failed
+
+💡 Example Output:
+Thread 1: Withdrawal successful. New balance = 300
+Thread 2: Withdrawal failed. Not enough funds.
