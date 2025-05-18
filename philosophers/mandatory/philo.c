@@ -23,6 +23,6 @@ int main(int ac, char **av)
 	if (start_simulation(&data))
 		return (error_exit(ERR_THREAD, &data));
 	join_threads(&data);
-	cleanup(&data);
+	clean_up(&data);
 	return (0);
 }

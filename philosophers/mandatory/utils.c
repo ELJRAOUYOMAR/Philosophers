@@ -100,6 +100,6 @@ void    print_status(t_data *data, int id, char *status)
 int error_exit(char *message, t_data *data)
 {
     printf("Error : %s\n", message);
-    cleanup(data);
+    clean_up(data);
     return (1);
 }

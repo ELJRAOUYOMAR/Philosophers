@@ -84,7 +84,7 @@ int start_simulation(t_data *data);
 int simulation_finished(t_data *data);
 
 /* cleanup */
-void *cleanup(t_data *data);
+void *clean_up(t_data *data);
 void join_threads(t_data *data);
 
 #endif

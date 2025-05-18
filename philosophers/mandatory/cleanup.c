@@ -6,7 +6,7 @@
  * @data: Pointer to simulation data
  * Return : nothing
  */
-void *cleanup(t_data *data)
+void *clean_up(t_data *data)
 {
     int i;
 
