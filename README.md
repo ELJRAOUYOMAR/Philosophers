@@ -146,3 +146,9 @@ int main() {
 - 🔥 Undefined behavior: Final value may vary each run.
 
 ## deadlock
+A deadlock occurs when two or more threads are waiting on each other to release resources, but none of them ever do, so all the threads are stuck forever.
+#### 🧵 Deadlock in Simple Terms
+Imagine:
+- Thread A holds Lock 1 and wants Lock 2
+- Thread B holds Lock 2 and wants Lock 1
+Now both threads wait forever for each other. That’s a deadlock.
