@@ -84,10 +84,65 @@ will print its death.
 ## Race condition
 A race condition happens when two or more processes or threads access shared data at the same time, and the final outcome depends on the timing of their execution. If not handled properly, it can lead to unexpected or incorrect behavior.
 #### Example:
-Two threads try to increase a counter:
-- Thread ```A``` reads value ```5```
-- Thread ```B``` reads value ```5```
-- Both add ```1``` → get ```6```
-- Both write ```6``` → final value is ```6```, but it should be ```7```
-To prevent this, we use synchronization techniques like ```mutexes``` or ```semaphores```.
+```C
+#include <stdio.h>
+#include <pthread.h>
 
+int winner = -1;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+void* try_to_win(void* arg) {
+    int id = *(int*)arg;
+    pthread_mutex_lock(&lock);
+    if (winner == -1) {
+        winner = id;
+    }
+    pthread_mutex_unlock(&lock);
+    return NULL;
+}
+
+int main() {
+    pthread_t t1, t2;
+    int id1 = 1, id2 = 2;
+    pthread_create(&t1, NULL, try_to_win, &id1);
+    pthread_create(&t2, NULL, try_to_win, &id2);
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    printf("winner = %d\n", winner);
+    return 0;
+}
+```
+- ✅ No data race: All shared access is synchronized.
+
+- ⚠️ Still a race condition: Outcome (who wins) depends on timing.
+
+## Data race
+A data race is a specific type of race condition where multiple threads access the same memory location simultaneously, with at least one thread performing a write operation, and there's no proper synchronization.
+
+#### Example
+```C
+#include <stdio.h>
+#include <pthread.h>
+
+int shared = 0;
+
+void* increment(void* arg) {
+    for (int i = 0; i < 100000; ++i)
+        shared++;  // Read-modify-write with no synchronization
+    return NULL;
+}
+
+int main() {
+    pthread_t t1, t2;
+    pthread_create(&t1, NULL, increment, NULL);
+    pthread_create(&t2, NULL, increment, NULL);
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    printf("shared = %d\n", shared);
+    return 0;
+}
+```
+- ❗ Data Race: Both threads modify shared without synchronization (e.g., mutex).
+- 🔥 Undefined behavior: Final value may vary each run.
+
+## deadlock

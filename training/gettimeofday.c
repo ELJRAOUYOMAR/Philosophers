@@ -8,7 +8,8 @@
     time_t tv_sec;  // Seconds since 00:00:00, 1 Jan 1970 UTC
     suseconds_t tv_usec; // additional microseconds (long int)
    } 
- * @timwzone: The second parameter was historically used for timezone information but is now obsolete and typically set to NULL
+ * @timwzone: The second parameter was historically used for timezone informat
+    on but is now obsolete and typically set to NULL
  *
  * Return: The function returns 0 on success, -1 on failure.
 */

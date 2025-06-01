@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 
-#define THREAD_NUMBER 10 
+#define THREAD_NUMBER 100
 pthread_mutex_t mutexFuel;
 pthread_mutex_t mutexWater;
 int fuel = 50;
@@ -43,33 +43,46 @@ int main()
     return 0;
 }
 
-/*
-    Thread A: Gets mutexFuel, waits for mutexWater
-    Thread B: Gets mutexWater, waits for mutexFuel
-    → CIRCULAR WAIT = DEADLOCK!
+// first solution
+// void *routine(void *arg)
+// {
+//     pthread_mutex_lock(&mutexFuel);
+//     pthread_mutex_lock(&mutexWater);
+ 
+//     fuel += 50;
+//     water += 10;
 
-    * solution: Always acquire locks in same order
-    pthread_mutex_lock(&mutexWater);
-    pthread_mutex_lock(&mutexFuel);
-*/
+//     printf("Incremented fuel to %d and water to %d\n", fuel, water);
+    
+//     pthread_mutex_unlock(&mutexFuel);
+//     pthread_mutex_unlock(&mutexWater);
+    
+//     sleep(1);
+//     return NULL;
+// }
 
+// second solution
 void *routine(void *arg)
 {
-    if (rand() % 2 == 0)
+    if (&mutexFuel < &mutexWater)
     {
-        pthread_mutex_lock(&mutexFuel); // order: Fuel -> water
+        pthread_mutex_lock(&mutexFuel);
         pthread_mutex_lock(&mutexWater);
     }
-    else
+    else 
     {
-        pthread_mutex_lock(&mutexWater);    // order: water -> Fuel
+        pthread_mutex_lock(&mutexWater);
         pthread_mutex_lock(&mutexFuel);
     }
+
     fuel += 50;
     water += 10;
+
     printf("Incremented fuel to %d and water to %d\n", fuel, water);
+    
     pthread_mutex_unlock(&mutexFuel);
     pthread_mutex_unlock(&mutexWater);
+    
     sleep(1);
     return NULL;
 }

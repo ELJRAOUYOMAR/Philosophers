@@ -1,36 +1,26 @@
 #include <stdio.h>
 #include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
 
-/*
-    Race condition
-*/
-int nbre = 0;
+int winner = -1;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
-void* routine(__attribute__((unused))void *arg)
-{
-    for (int i = 0; i < 1000000; i++)
-    {
-        nbre++;
+void* try_to_win(void* arg) {
+    int id = *(int*)arg;
+    pthread_mutex_lock(&lock);
+    if (winner == -1) {
+        winner = id;
     }
+    pthread_mutex_unlock(&lock);
     return NULL;
 }
 
-int main()
-{
-    pthread_t thread1, thread2;
-
-    if (pthread_create(&thread1, NULL, routine, NULL))
-        return 1;
-    if (pthread_create(&thread2, NULL, routine, NULL))
-        return 1;
-
-    if (pthread_join(thread1, NULL))
-        return 1;
-    if (pthread_join(thread2, NULL))
-        return 1;
-    
-    printf("nbre = %d\n", nbre); // the first and second routine access at the same memory and change on it in the same time, that is exactly the race condition
+int main() {
+    pthread_t t1, t2;
+    int id1 = 1, id2 = 2;
+    pthread_create(&t1, NULL, try_to_win, &id1);
+    pthread_create(&t2, NULL, try_to_win, &id2);
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+    printf("winner = %d\n", winner);
     return 0;
 }
