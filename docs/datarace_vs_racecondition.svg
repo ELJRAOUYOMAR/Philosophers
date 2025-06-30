@@ -1,0 +1,199 @@
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="500" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#2c3e50">
+    Data Race vs Race Condition
+  </text>
+  
+  <!-- Data Race Section -->
+  <g>
+    <!-- Background -->
+    <rect x="50" y="60" width="400" height="280" fill="#ffebee" stroke="#e57373" stroke-width="2" rx="10"/>
+    
+    <!-- Title -->
+    <text x="250" y="90" text-anchor="middle" font-size="20" font-weight="bold" fill="#c62828">
+      Data Race
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="250" y="115" text-anchor="middle" font-size="14" fill="#666">
+      (Memory Access Issue)
+    </text>
+    
+    <!-- Memory representation -->
+    <rect x="200" y="140" width="100" height="40" fill="#fff" stroke="#333" stroke-width="2"/>
+    <text x="250" y="165" text-anchor="middle" font-size="12" fill="#333">counter = 0</text>
+    
+    <!-- Thread 1 -->
+    <g>
+      <rect x="80" y="200" width="120" height="60" fill="#ffcdd2" stroke="#f44336" stroke-width="1" rx="5"/>
+      <text x="140" y="220" text-anchor="middle" font-size="12" font-weight="bold">Thread 1</text>
+      <text x="140" y="240" text-anchor="middle" font-size="11">counter++</text>
+      <text x="140" y="255" text-anchor="middle" font-size="10">(read-modify-write)</text>
+    </g>
+    
+    <!-- Thread 2 -->
+    <g>
+      <rect x="280" y="200" width="120" height="60" fill="#ffcdd2" stroke="#f44336" stroke-width="1" rx="5"/>
+      <text x="340" y="220" text-anchor="middle" font-size="12" font-weight="bold">Thread 2</text>
+      <text x="340" y="240" text-anchor="middle" font-size="11">counter++</text>
+      <text x="340" y="255" text-anchor="middle" font-size="10">(read-modify-write)</text>
+    </g>
+    
+    <!-- Arrows showing simultaneous access -->
+    <path d="M 180 230 L 210 160" stroke="#f44336" stroke-width="2" marker-end="url(#arrowhead-red)"/>
+    <path d="M 300 230 L 280 160" stroke="#f44336" stroke-width="2" marker-end="url(#arrowhead-red)"/>
+    
+    <!-- Warning symbol -->
+    <g transform="translate(250, 280)">
+      <circle cx="0" cy="0" r="15" fill="#ff5722"/>
+      <text x="0" y="5" text-anchor="middle" font-size="16" font-weight="bold" fill="white">!</text>
+    </g>
+    
+    <text x="250" y="320" text-anchor="middle" font-size="12" fill="#d32f2f">
+      Undefined Behavior - No Synchronization
+    </text>
+  </g>
+  
+  <!-- Race Condition Section -->
+  <g>
+    <!-- Background -->
+    <rect x="550" y="60" width="400" height="280" fill="#e8f5e8" stroke="#66bb6a" stroke-width="2" rx="10"/>
+    
+    <!-- Title -->
+    <text x="750" y="90" text-anchor="middle" font-size="20" font-weight="bold" fill="#2e7d32">
+      Race Condition
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="750" y="115" text-anchor="middle" font-size="14" fill="#666">
+      (Logic/Timing Issue)
+    </text>
+    
+    <!-- Bank account representation -->
+    <rect x="700" y="140" width="100" height="40" fill="#fff" stroke="#333" stroke-width="2"/>
+    <text x="750" y="165" text-anchor="middle" font-size="12" fill="#333">balance = $100</text>
+    
+    <!-- Thread A -->
+    <g>
+      <rect x="580" y="200" width="140" height="80" fill="#c8e6c9" stroke="#4caf50" stroke-width="1" rx="5"/>
+      <text x="650" y="220" text-anchor="middle" font-size="12" font-weight="bold">Thread A</text>
+      <text x="650" y="240" text-anchor="middle" font-size="10">if (balance >= $80)</text>
+      <text x="650" y="255" text-anchor="middle" font-size="10">  withdraw($80)</text>
+      <text x="650" y="270" text-anchor="middle" font-size="9">(Check-Then-Act)</text>
+    </g>
+    
+    <!-- Thread B -->
+    <g>
+      <rect x="780" y="200" width="140" height="80" fill="#c8e6c9" stroke="#4caf50" stroke-width="1" rx="5"/>
+      <text x="850" y="220" text-anchor="middle" font-size="12" font-weight="bold">Thread B</text>
+      <text x="850" y="240" text-anchor="middle" font-size="10">if (balance >= $50)</text>
+      <text x="850" y="255" text-anchor="middle" font-size="10">  withdraw($50)</text>
+      <text x="850" y="270" text-anchor="middle" font-size="9">(Check-Then-Act)</text>
+    </g>
+    
+    <!-- Arrows showing access to balance -->
+    <path d="M 680 200 L 720 180" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead-green)"/>
+    <path d="M 820 200 L 780 180" stroke="#4caf50" stroke-width="2" marker-end="url(#arrowhead-green)"/>
+    
+    <!-- Clock symbol -->
+    <g transform="translate(750, 295)">
+      <circle cx="0" cy="0" r="12" fill="#ff9800" stroke="#f57c00" stroke-width="2"/>
+      <line x1="0" y1="0" x2="0" y2="-8" stroke="#f57c00" stroke-width="2"/>
+      <line x1="0" y1="0" x2="6" y2="0" stroke="#f57c00" stroke-width="2"/>
+    </g>
+    
+    <text x="750" y="320" text-anchor="middle" font-size="12" fill="#388e3c">
+      Timing Dependent - Even with Proper Locks
+    </text>
+  </g>
+  
+  <!-- Timeline Comparison -->
+  <g transform="translate(50, 380)">
+    <text x="450" y="20" text-anchor="middle" font-size="18" font-weight="bold" fill="#34495e">
+      Timeline Comparison
+    </text>
+    
+    <!-- Data Race Timeline -->
+    <g transform="translate(0, 40)">
+      <text x="0" y="15" font-size="14" font-weight="bold" fill="#c62828">Data Race:</text>
+      
+      <!-- Time axis -->
+      <line x1="100" y1="30" x2="500" y2="30" stroke="#333" stroke-width="1"/>
+      <text x="300" y="50" text-anchor="middle" font-size="12" fill="#666">Time →</text>
+      
+      <!-- Thread operations -->
+      <rect x="150" y="10" width="80" height="20" fill="#ffcdd2" stroke="#f44336"/>
+      <text x="190" y="25" text-anchor="middle" font-size="10">T1: READ</text>
+      
+      <rect x="180" y="35" width="80" height="20" fill="#ffcdd2" stroke="#f44336"/>
+      <text x="220" y="50" text-anchor="middle" font-size="10">T2: READ</text>
+      
+      <rect x="270" y="10" width="80" height="20" fill="#ffcdd2" stroke="#f44336"/>
+      <text x="310" y="25" text-anchor="middle" font-size="10">T1: WRITE</text>
+      
+      <rect x="300" y="35" width="80" height="20" fill="#ffcdd2" stroke="#f44336"/>
+      <text x="340" y="50" text-anchor="middle" font-size="10">T2: WRITE</text>
+      
+      <!-- Conflict indicator -->
+      <text x="400" y="35" font-size="24" fill="#f44336">⚡</text>
+    </g>
+    
+    <!-- Race Condition Timeline -->
+    <g transform="translate(0, 120)">
+      <text x="0" y="15" font-size="14" font-weight="bold" fill="#2e7d32">Race Condition:</text>
+      
+      <!-- Time axis -->
+      <line x1="100" y1="30" x2="500" y2="30" stroke="#333" stroke-width="1"/>
+      <text x="300" y="50" text-anchor="middle" font-size="12" fill="#666">Time →</text>
+      
+      <!-- Thread operations -->
+      <rect x="150" y="10" width="60" height="20" fill="#c8e6c9" stroke="#4caf50"/>
+      <text x="180" y="25" text-anchor="middle" font-size="9">A: CHECK</text>
+      
+      <rect x="160" y="35" width="60" height="20" fill="#c8e6c9" stroke="#4caf50"/>
+      <text x="190" y="50" text-anchor="middle" font-size="9">B: CHECK</text>
+      
+      <rect x="280" y="10" width="60" height="20" fill="#c8e6c9" stroke="#4caf50"/>
+      <text x="310" y="25" text-anchor="middle" font-size="9">A: ACT</text>
+      
+      <rect x="290" y="35" width="60" height="20" fill="#c8e6c9" stroke="#4caf50"/>
+      <text x="320" y="50" text-anchor="middle" font-size="9">B: ACT</text>
+      
+      <!-- Problem indicator -->
+      <text x="400" y="35" font-size="24" fill="#ff9800">⏰</text>
+    </g>
+  </g>
+  
+  <!-- Key Differences -->
+  <g transform="translate(50, 580)">
+    <text x="450" y="20" text-anchor="middle" font-size="18" font-weight="bold" fill="#34495e">
+      Key Differences
+    </text>
+    
+    <g transform="translate(50, 40)">
+      <rect x="0" y="0" width="350" height="80" fill="#ffebee" stroke="#e57373" stroke-width="1" rx="5"/>
+      <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">Data Race</text>
+      <text x="10" y="40" font-size="12" fill="#333">• Memory access safety issue</text>
+      <text x="10" y="55" font-size="12" fill="#333">• Always undefined behavior</text>
+      <text x="10" y="70" font-size="12" fill="#333">• Fixed with synchronization primitives</text>
+    </g>
+    
+    <g transform="translate(450, 40)">
+      <rect x="0" y="0" width="350" height="80" fill="#e8f5e8" stroke="#66bb6a" stroke-width="1" rx="5"/>
+      <text x="175" y="20" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">Race Condition</text>
+      <text x="10" y="40" font-size="12" fill="#333">• Program logic/correctness issue</text>
+      <text x="10" y="55" font-size="12" fill="#333">• Timing-dependent behavior</text>
+      <text x="10" y="70" font-size="12" fill="#333">• Fixed with careful design patterns</text>
+    </g>
+  </g>
+  
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f44336"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4caf50"/>
+    </marker>
+  </defs>
+</svg>

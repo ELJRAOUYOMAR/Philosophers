@@ -145,6 +145,9 @@ int main() {
 - ❗ Data Race: Both threads modify shared without synchronization (e.g., mutex).
 - 🔥 Undefined behavior: Final value may vary each run.
 
+## difference between `Data race` and `race condition`
+![data race vs race condition](docs/datarace_vs_racecondition.svg)
+
 ## deadlock
 A deadlock occurs when two or more threads are waiting on each other to release resources, but none of them ever do, so all the threads are stuck forever.
 #### 🧵 Deadlock in Simple Terms

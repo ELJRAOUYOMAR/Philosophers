@@ -22,7 +22,7 @@ int main()
     if (pthread_create(&thread_id, &attr, thread_running, NULL) != 0)
     {
         printf("creation Error!\n");
-        pthread_attr_destroy(&attr); // clean up before eiting
+        pthread_attr_destroy(&attr); // clean up before editing
         return 1;
     }
 
