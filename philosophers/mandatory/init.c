@@ -16,6 +16,7 @@ int init_data(t_data *data, int ac, char **av)
     data->time_to_eat = ft_atoi(av[3]);
     data->time_to_sleep = ft_atoi(av[4]);
     data->simulation_end = 0;
+    data->monitor_thread = 0;
     if (ac == 6)
     {
         data->num_meals = ft_atoi(av[5]);

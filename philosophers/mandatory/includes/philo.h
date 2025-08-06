@@ -45,6 +45,7 @@ typedef struct s_data
     int             meals_specified;    /* flag: was num_meals specified(1)? */
     int             simulation_end;     /* flag for ending simulation */
     long long       start_time;         /* start time of simulation */
+    pthread_t       monitor_thread;     /* monitor thread ID */
     pthread_mutex_t *forks;             /* array of mutex locks for forks */
     pthread_mutex_t write_lock;         /* mutex for writing the console */
     pthread_mutex_t meal_lock;          /* mutex for meal-related operations */
@@ -70,7 +71,7 @@ void precise_sleep(long long time_sleep_in_ms);
 
 /* routines */
 void *philosopher_routine(void *arg);
-void take_forks(t_philo *philo);
+int take_forks(t_philo *philo);
 void eat(t_philo *philo);
 void put_down_forks(t_philo *philo);
 

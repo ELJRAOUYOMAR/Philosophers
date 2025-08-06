@@ -21,6 +21,7 @@ void *monitor_routine(void *arg)
             pthread_mutex_lock(&data->end_lock);
             data->simulation_end = 1;
             pthread_mutex_unlock(&data->end_lock);
+            return (NULL);
         }
         // usleep(1000);
         usleep(data->time_to_die / 10);  // sleep to prevent high CPU usage

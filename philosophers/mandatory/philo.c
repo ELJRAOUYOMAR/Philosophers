@@ -3,6 +3,7 @@
 int main(int ac, char **av)
 {
     t_data data;
+	
     memset(&data, 0, sizeof(t_data));
     if (ac < 5 || ac > 6)
     {
@@ -23,6 +24,7 @@ int main(int ac, char **av)
 	if (start_simulation(&data))
 		return (error_exit(ERR_THREAD, &data));
 	join_threads(&data);
+	// usleep(10000);
 	cleanup(&data);
 	return (0);
 }

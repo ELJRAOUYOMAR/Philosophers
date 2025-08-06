@@ -1,5 +1,6 @@
 # philosophers_project
 
+![philosopher dining problem](../imgs/philo.png)
 
 ## handling Deadlock
 ### ``` Deadlock definition```
@@ -29,3 +30,15 @@ The delay is set to half of the eating time (time_to_eat / 2), which is a reason
 - It's long enough to break synchronization
 - It's short enough not to waste too much time
 - It's proportional to the simulation's eating duration
+
+### use of same part of codes
+#### ```Why the meal_lock is Critical```
+The meal_lock mutex protects two important variables:
+- last_meal_time: Used by the monitor thread to check for starvation
+- meals_eaten: Used to track when all philosophers have eaten enough
+```Without this mutex:```
+The monitor thread might read a partially updated timestamp
+The check for "all philosophers have eaten enough" could be incorrect
+These race conditions could lead to missed starvation events or premature simulation ending
+
+```The mutex ensures these operations are atomic and properly synchronized with any threads that might be reading these values.```

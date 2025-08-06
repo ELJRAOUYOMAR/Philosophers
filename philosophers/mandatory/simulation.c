@@ -12,7 +12,7 @@
 int start_simulation(t_data *data)
 {
     int i;
-    pthread_t   monitor;
+    // pthread_t   monitor;
     
     data->start_time = get_time();
     if (data->start_time == -1)
@@ -26,10 +26,11 @@ int start_simulation(t_data *data)
             return (1);
         i++;
     }
-    if (pthread_create(&monitor, NULL, monitor_routine, data))
+    if (pthread_create(&data->monitor_thread, NULL, monitor_routine, data))
         return (1);
-    if (pthread_detach(monitor))
-        return (1);
+    // don't detach the monitor thread, we will join it later
+    // if (pthread_detach(monitor))
+    //     return (1);
     return (0);
 }
 
