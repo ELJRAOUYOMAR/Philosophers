@@ -35,7 +35,7 @@ void* routine(__attribute__((unused))void *arg)
 int main()
 {
     pthread_t thread1, thread2;
-    pthread_mutex_init(&mutex, NULL);
+    pthread_mutex_init(&mutex, NULL);   
     if (pthread_create(&thread1, NULL, routine, NULL))
         return 1;
     if (pthread_create(&thread2, NULL, routine, NULL))
