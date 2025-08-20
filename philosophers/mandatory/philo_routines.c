@@ -24,8 +24,15 @@ void *philosopher_routine(void *arg)
     }
     // multi philos logic
     // if odd numbered philosopher, delay start to prevent deadlock
+    // if (philo->id % 2 == 1)
+    //     precise_sleep(philo->data->time_to_eat);
     if (philo->id % 2 == 1)
+    {
+        // Odd philosophers delay and think
+        print_status(philo->data, philo->id, THINKING);
         precise_sleep(philo->data->time_to_eat);
+    }
+    
     while (!simulation_finished(philo->data))
     {
         if (take_forks(philo))
