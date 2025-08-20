@@ -1,5 +1,7 @@
 # Philosophers
 
+![philosopher dining problem](imgs/philo.png)
+
 ## Definition
 The Philosophers project (42 school) is a coding exercise where students implement a solution to the Dining Philosophers Problem in C, using threads, processes, mutexes, or semaphores to manage shared resources and prevent deadlock or starvation in a concurrent simulation of philosophers eating and thinking.
 
@@ -91,3 +93,43 @@ Two threads try to increase a counter:
 - Both write ```6``` → final value is ```6```, but it should be ```7```
 To prevent this, we use synchronization techniques like ```mutexes``` or ```semaphores```.
 
+## handling Deadlock
+### ``` Deadlock definition```
+A deadlock in multithreading occurs when two or more threads are unable to proceed because each is waiting for a resource (e.g., a lock) that another thread holds, creating a circular dependency. No thread can progress, causing the program to hang.
+Example:
+- Thread 1 holds Lock A and waits for Lock B.
+- Thread 2 holds Lock B and waits for Lock A. Both threads wait indefinitely, resulting in a deadlock.
+```C
+if (philo->id % 2 == 1)
+    precise_sleep(philo->data->time_to_eat / 2);
+```
+This code makes odd-numbered philosophers wait a short time before starting their routine. Here's why this is important:
+In the classic Dining Philosophers problem, if all philosophers try to grab their left fork simultaneously:
+1. Each philosopher picks up their left fork
+2. No right forks remain available for anyone
+3. Everyone is stuck holding one fork and waiting for their second fork
+4. This is a deadlock - ```no progress can be made```
+
+### ```The Solution in This Code```
+By delaying odd-numbered philosophers:
+- Even-numbered philosophers start immediately and try to grab forks
+- Odd-numbered philosophers wait briefly before attempting to grab forks
+- This breaks the symmetry that could lead to deadlock
+- It staggers the fork acquisition attempts
+### ```Why Half of time_to_eat?```
+The delay is set to half of the eating time (time_to_eat / 2), which is a reasonable value because:
+- It's long enough to break synchronization
+- It's short enough not to waste too much time
+- It's proportional to the simulation's eating duration
+
+### use of same part of codes
+#### ```Why the meal_lock is Critical```
+The meal_lock mutex protects two important variables:
+- last_meal_time: Used by the monitor thread to check for starvation
+- meals_eaten: Used to track when all philosophers have eaten enough
+```Without this mutex:```
+The monitor thread might read a partially updated timestamp
+The check for "all philosophers have eaten enough" could be incorrect
+These race conditions could lead to missed starvation events or premature simulation ending
+
+```The mutex ensures these operations are atomic and properly synchronized with any threads that might be reading these values.```
