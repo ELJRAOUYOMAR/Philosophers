@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 int start_simulation(t_data *data)
 {

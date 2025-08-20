@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 int init_data(t_data *data, int ac, char **av)
 {
@@ -72,7 +72,7 @@ int init_philosophers(t_data *data)
         // data->philosophers[i].right_fork_id = (i + 1) % data->num_philos;
         data->philosophers[i].meals_eaten = 0;
         data->philosophers[i].last_meal_time = 0;
-        data->philosophers[i].is_eating = 0;
+        // data->philosophers[i].is_eating = 0;
         data->philosophers[i].data = data;
         i++;
     }

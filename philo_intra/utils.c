@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 int ft_atoi(char *str)
 {
@@ -60,6 +60,7 @@ void    print_status(t_data *data, int id, char *status)
     long long current_time;
 
     pthread_mutex_lock(&data->write_lock);
+    // Double-check simulation status while holding the write lock
     if (!simulation_finished(data))
     {
         current_time = get_time();

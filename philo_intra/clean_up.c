@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 void clean_up(t_data *data)
 {

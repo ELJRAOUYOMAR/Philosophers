@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 int take_first_fork(t_philo *philo, int first_fork)
 {
@@ -35,10 +35,17 @@ int take_forks(t_philo *philo)
     int first_fork;
     int second_fork;
     
+    if (simulation_finished(data))
+        return (1);
     // Special case: single philosopher
     if (data->num_philos == 1)
     {
         pthread_mutex_lock(&data->forks[philo->left_fork_id]);
+        if (simulation_finished(data))
+        {
+            pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
+            return (1);
+        }
         print_status(data, philo->id, TAKEN_FORK);
         while (!simulation_finished(data))
             usleep(1000);

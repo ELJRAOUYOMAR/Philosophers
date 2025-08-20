@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 void *philosopher_routine(void *arg)
 {
@@ -25,8 +25,8 @@ void *philosopher_routine(void *arg)
             print_status(philo->data, philo->id, THINKING);
             if (philo->data->num_philos % 2 == 1)
             {
-                long long think_time = philo->data->time_to_eat * 2 - philo->data->time_to_sleep;
-                if (think_time > 0 && think_time < 100)
+                long long think_time = (philo->data->time_to_eat * 2) - philo->data->time_to_sleep;
+                if (think_time > 0 && think_time < 200)
                     precise_sleep(think_time);
                 else
                     precise_sleep(1);
@@ -35,7 +35,6 @@ void *philosopher_routine(void *arg)
         }
         else
         {
-            // If couldn't get forks, small delay before retrying
             usleep(100);
         }
     }
@@ -81,15 +80,17 @@ void eat(t_philo *philo)
     t_data *data;
     
     data = philo->data;
+    // Update last meal time BEFORE eating starts
     pthread_mutex_lock(&data->meal_lock);
-    philo->is_eating = 1;
+    // philo->is_eating = 1;
     philo->last_meal_time = get_time();
     pthread_mutex_unlock(&data->meal_lock);
     print_status(data, philo->id, EATING);
     precise_sleep(data->time_to_eat);
+    // Update meal count after eating
     pthread_mutex_lock(&data->meal_lock);
     philo->meals_eaten++;
-    philo->is_eating = 0;
+    // philo->is_eating = 0;
     pthread_mutex_unlock(&data->meal_lock);
 }
 

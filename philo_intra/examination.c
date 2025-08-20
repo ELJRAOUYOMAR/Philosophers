@@ -1,4 +1,4 @@
-#include "includes/philo.h"
+#include "philo.h"
 
 void *monitor_routine(void *arg)
 {
@@ -9,9 +9,9 @@ void *monitor_routine(void *arg)
     {
         if (check_death(data))
         {
-            pthread_mutex_lock(&data->end_lock);
-            data->simulation_end = 1;
-            pthread_mutex_unlock(&data->end_lock);
+            // pthread_mutex_lock(&data->end_lock);
+            // data->simulation_end = 1;
+            // pthread_mutex_unlock(&data->end_lock);
             break;
         }
         if (check_each_philo_eat(data))
@@ -21,7 +21,7 @@ void *monitor_routine(void *arg)
             pthread_mutex_unlock(&data->end_lock);
             break;
         }
-        usleep(500);   // Check every 1ms for precision (within 10ms requirement)
+        usleep(1000);   // Check every 1ms for precision (within 10ms requirement)
     }
     return (NULL);
 }
@@ -31,37 +31,42 @@ static void printf_death(t_data *data, int id)
     long long   current_time;
 
     pthread_mutex_lock(&data->write_lock);
-    current_time = get_time();
-    if (current_time != -1)
+    pthread_mutex_lock(&data->end_lock);
+    if (!data->simulation_end)  // Double-check to avoid duplicate death messages
     {
-        printf("%lld %d %s\n",
-            time_diff(data->start_time, current_time), id, DIED);
+        data->simulation_end = 1;
+        current_time = get_time();
+        if (current_time != -1)
+        {
+            printf("%lld %d %s\n",
+                time_diff(data->start_time, current_time), id, DIED);
+        }
     }
+    pthread_mutex_unlock(&data->end_lock);
     pthread_mutex_unlock(&data->write_lock);
 }
+
 int	check_death(t_data *data)
 {
     int i;
     long long current_time;
     long long time_since_meal;
     long long last_meal;
-    int is_eating;
 
     i = 0;
     while (i < data->num_philos)
     {
         pthread_mutex_lock(&data->meal_lock);
         last_meal = data->philosophers[i].last_meal_time;
-        is_eating = data->philosophers[i].is_eating;
         pthread_mutex_unlock(&data->meal_lock);
         current_time = get_time();
+        time_since_meal = time_diff(last_meal, current_time);
         if (current_time == -1)
             return (1);
-        time_since_meal = time_diff(last_meal, current_time);
         
         // Philosopher dies if time since last meal > time_to_die AND not currently eating
         // Use > instead of >= to give philosophers the full time_to_die duration
-        if (time_since_meal > data->time_to_die && !is_eating)
+        if (time_since_meal > data->time_to_die)
         {
             printf_death(data, data->philosophers[i].id);
             return (1);

@@ -31,7 +31,7 @@ typedef struct s_philo
     int             right_fork_id;
     int             meals_eaten;
     long long       last_meal_time;
-    int             is_eating;  // Added: track eating state
+    // int             is_eating;  // Added: track eating state
     struct s_data   *data;
 }   t_philo;
 
