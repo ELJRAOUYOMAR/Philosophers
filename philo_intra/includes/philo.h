@@ -31,7 +31,7 @@ typedef struct s_philo
     int             right_fork_id;
     int             meals_eaten;
     long long       last_meal_time;
-    int             is_eating; // track eating state
+    int             is_eating;  // Added: track eating state
     struct s_data   *data;
 }   t_philo;
 
@@ -46,7 +46,6 @@ typedef struct s_data
     int             meals_specified;
     int             simulation_end;
     long long       start_time;
-    pthread_t       monitor_thread;
     pthread_mutex_t *forks;
     pthread_mutex_t write_lock;
     pthread_mutex_t meal_lock; 
@@ -58,6 +57,7 @@ typedef struct s_data
 int ft_atoi(char *str);
 int check_args(int ac, char **av);
 void    print_status(t_data *data, int id, char *status);
+void    print_death(t_data *data, int id);  // Added: dedicated death printing
 int error_exit(char *message, t_data *data);
 
 /* init */
@@ -78,7 +78,7 @@ void put_down_forks(t_philo *philo);
 
 /* monitoring */
 void *monitor_routine(void *arg);
-int check_death(t_data *data);
+int	check_death(t_data *data);
 int check_each_philo_eat(t_data *data);
 
 /* simulation */

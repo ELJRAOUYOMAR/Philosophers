@@ -16,7 +16,6 @@ int main(int ac, char **av)
 		return (1);
 	if (init_data(&data, ac, av))
 		return (1);
-	printf("monitor ID = %ld\n", data.monitor_thread);
 	if (init_mutexes(&data))
 		return (error_exit(ERR_MUTEX, &data));
 	if (init_philosophers(&data))

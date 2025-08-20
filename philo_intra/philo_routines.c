@@ -7,7 +7,7 @@ void *philosopher_routine(void *arg)
     philo = (t_philo *)arg;
     if (philo->id % 2 == 1)
     {
-        print_status(philo->data, philo->id, THINKING);
+        // print_status(philo->data, philo->id, THINKING);
         precise_sleep(philo->data->time_to_eat / 2);
     }
     while (!simulation_finished(philo->data))
@@ -32,13 +32,13 @@ void *philosopher_routine(void *arg)
     return (NULL);
 }
 
-void    last_one(t_philo *philo, t_data *data)
-{
-    pthread_mutex_lock(&data->forks[philo->right_fork_id]);
-    print_status(data, philo->id, TAKEN_FORK);
-    pthread_mutex_lock(&data->forks[philo->left_fork_id]);
-    print_status(data, philo->id, TAKEN_FORK);
-}
+// void    last_one(t_philo *philo, t_data *data)
+// {
+//     pthread_mutex_lock(&data->forks[philo->right_fork_id]);
+//     print_status(data, philo->id, TAKEN_FORK);
+//     pthread_mutex_lock(&data->forks[philo->left_fork_id]);
+//     print_status(data, philo->id, TAKEN_FORK);
+// }
 
 // void take_forks(t_philo *philo)
 // {
