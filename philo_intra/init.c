@@ -65,14 +65,13 @@ int init_philosophers(t_data *data)
     {
         data->philosophers[i].id = i + 1;
         data->philosophers[i].left_fork_id = i;
-        if (i == data->num_philos - 1)
-            data->philosophers[i].right_fork_id = 0;
-        else 
-            data->philosophers[i].right_fork_id = i + 1;    // last philo's right fork is the first one
-        // data->philosophers[i].right_fork_id = (i + 1) % data->num_philos;
+        // if (i == data->num_philos - 1)
+        //     data->philosophers[i].right_fork_id = 0;
+        // else 
+        //     data->philosophers[i].right_fork_id = i + 1;    // last philo's right fork is the first one
+        data->philosophers[i].right_fork_id = (i + 1) % data->num_philos;
         data->philosophers[i].meals_eaten = 0;
         data->philosophers[i].last_meal_time = 0;
-        // data->philosophers[i].is_eating = 0;
         data->philosophers[i].data = data;
         i++;
     }

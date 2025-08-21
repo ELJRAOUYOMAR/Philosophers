@@ -31,7 +31,6 @@ typedef struct s_philo
     int             right_fork_id;
     int             meals_eaten;
     long long       last_meal_time;
-    // int             is_eating;  // Added: track eating state
     struct s_data   *data;
 }   t_philo;
 
@@ -57,7 +56,6 @@ typedef struct s_data
 int ft_atoi(char *str);
 int check_args(int ac, char **av);
 void    print_status(t_data *data, int id, char *status);
-void    print_death(t_data *data, int id);  // Added: dedicated death printing
 int error_exit(char *message, t_data *data);
 
 /* init */

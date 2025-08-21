@@ -9,9 +9,9 @@ void *monitor_routine(void *arg)
     {
         if (check_death(data))
         {
-            // pthread_mutex_lock(&data->end_lock);
-            // data->simulation_end = 1;
-            // pthread_mutex_unlock(&data->end_lock);
+            pthread_mutex_lock(&data->end_lock);
+            data->simulation_end = 1;
+            pthread_mutex_unlock(&data->end_lock);
             break;
         }
         if (check_each_philo_eat(data))
@@ -64,9 +64,9 @@ int	check_death(t_data *data)
         if (current_time == -1)
             return (1);
         
-        // Philosopher dies if time since last meal > time_to_die AND not currently eating
+        // Philosopher dies if time since last meal > time_to_die
         // Use > instead of >= to give philosophers the full time_to_die duration
-        if (time_since_meal > data->time_to_die)
+        if (time_since_meal >= data->time_to_die)
         {
             printf_death(data, data->philosophers[i].id);
             return (1);

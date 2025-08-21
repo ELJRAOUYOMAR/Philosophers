@@ -3,12 +3,13 @@
 void *philosopher_routine(void *arg)
 {
     t_philo *philo;
+    long long think_time;
 
     philo = (t_philo *)arg;
-    if (philo->data->num_philos > 1 && philo->id % 2 == 0)
+    if (philo->id % 2 == 0)
     {
         print_status(philo->data, philo->id, THINKING);
-        precise_sleep(philo->data->time_to_eat / 2);
+        usleep(1000);
     }
     while (!simulation_finished(philo->data))
     {
@@ -19,19 +20,22 @@ void *philosopher_routine(void *arg)
             if (simulation_finished(philo->data))
                 break ;
             print_status(philo->data, philo->id, SLEEPING);
-            precise_sleep(philo->data->time_to_sleep);
+            // precise_sleep(philo->data->time_to_sleep);
+            usleep(philo->data->time_to_sleep * 1000);
             if (simulation_finished(philo->data))
                 break ;
             print_status(philo->data, philo->id, THINKING);
-            if (philo->data->num_philos % 2 == 1)
+            if (philo->data->num_philos % 2 == 1 && philo->id % 2 == 1)
             {
-                long long think_time = (philo->data->time_to_eat * 2) - philo->data->time_to_sleep;
-                if (think_time > 0 && think_time < 200)
-                    precise_sleep(think_time);
-                else
-                    precise_sleep(1);
+                if (philo->data->time_to_eat >= philo->data->time_to_sleep)
+                {
+                    think_time = philo->data->time_to_eat - philo->data->time_to_sleep;
+                    // precise_sleep(think_time);
+                    usleep((think_time * 1000));
+                }
+                // else
+                //     usleep(3000);
             }
-
         }
         else
         {
@@ -41,40 +45,6 @@ void *philosopher_routine(void *arg)
     return (NULL);
 }
 
-// void    last_one(t_philo *philo, t_data *data)
-// {
-//     pthread_mutex_lock(&data->forks[philo->right_fork_id]);
-//     print_status(data, philo->id, TAKEN_FORK);
-//     pthread_mutex_lock(&data->forks[philo->left_fork_id]);
-//     print_status(data, philo->id, TAKEN_FORK);
-// }
-
-// void take_forks(t_philo *philo)
-// {
-//     t_data  *data;
-
-//     data = philo->data;
-//     if (data->num_philos == 1)
-//     {
-//         pthread_mutex_lock(&data->forks[philo->left_fork_id]);
-//         print_status(data, philo->id, TAKEN_FORK);
-//         // Wait for death - single philosopher cannot eat
-//         while (!simulation_finished(data))
-//             usleep(1000);
-//         pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
-//         return (1);
-//     }
-//     if (philo->left_fork_id < philo->right_fork_id)
-//     {
-//         pthread_mutex_lock(&data->forks[philo->left_fork_id]);
-//         print_status(data, philo->id, TAKEN_FORK);
-//         pthread_mutex_lock(&data->forks[philo->right_fork_id]);
-//         print_status(data, philo->id, TAKEN_FORK);
-//     }
-//     else
-//         last_one(philo, data);
-// }
-
 void eat(t_philo *philo)
 {
     t_data *data;
@@ -82,15 +52,12 @@ void eat(t_philo *philo)
     data = philo->data;
     // Update last meal time BEFORE eating starts
     pthread_mutex_lock(&data->meal_lock);
-    // philo->is_eating = 1;
     philo->last_meal_time = get_time();
     pthread_mutex_unlock(&data->meal_lock);
     print_status(data, philo->id, EATING);
-    precise_sleep(data->time_to_eat);
-    // Update meal count after eating
+    usleep(data->time_to_eat * 1000);
     pthread_mutex_lock(&data->meal_lock);
     philo->meals_eaten++;
-    // philo->is_eating = 0;
     pthread_mutex_unlock(&data->meal_lock);
 }
 
@@ -102,12 +69,13 @@ void put_down_forks(t_philo *philo)
     // Always release in the same order as acquired to prevent issues
     if (philo->left_fork_id < philo->right_fork_id)
     {
-        pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
         pthread_mutex_unlock(&data->forks[philo->right_fork_id]);
+        pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
     }
     else
     {
-        pthread_mutex_unlock(&data->forks[philo->right_fork_id]);
         pthread_mutex_unlock(&data->forks[philo->left_fork_id]);
+        pthread_mutex_unlock(&data->forks[philo->right_fork_id]);
     }
 }
+        
