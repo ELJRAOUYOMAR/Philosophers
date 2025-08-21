@@ -9,7 +9,7 @@ void *philosopher_routine(void *arg)
     if (philo->id % 2 == 0)
     {
         print_status(philo->data, philo->id, THINKING);
-        usleep(1000);
+        precise_sleep(philo->data->time_to_eat);
     }
     while (!simulation_finished(philo->data))
     {
@@ -20,21 +20,17 @@ void *philosopher_routine(void *arg)
             if (simulation_finished(philo->data))
                 break ;
             print_status(philo->data, philo->id, SLEEPING);
-            // precise_sleep(philo->data->time_to_sleep);
-            usleep(philo->data->time_to_sleep * 1000);
+            precise_sleep(philo->data->time_to_sleep);
             if (simulation_finished(philo->data))
                 break ;
             print_status(philo->data, philo->id, THINKING);
-            if (philo->data->num_philos % 2 == 1 && philo->id % 2 == 1)
+            if (philo->data->num_philos % 2)
             {
                 if (philo->data->time_to_eat >= philo->data->time_to_sleep)
                 {
-                    think_time = philo->data->time_to_eat - philo->data->time_to_sleep;
-                    // precise_sleep(think_time);
-                    usleep((think_time * 1000));
+                    think_time = philo->data->time_to_eat;
+                    precise_sleep(think_time);
                 }
-                // else
-                //     usleep(3000);
             }
         }
         else
@@ -45,21 +41,18 @@ void *philosopher_routine(void *arg)
     return (NULL);
 }
 
-void eat(t_philo *philo)
-{
-    t_data *data;
+// void eat(t_philo *philo)
+// {
+//     t_data *data;
     
-    data = philo->data;
-    // Update last meal time BEFORE eating starts
-    pthread_mutex_lock(&data->meal_lock);
-    philo->last_meal_time = get_time();
-    pthread_mutex_unlock(&data->meal_lock);
-    print_status(data, philo->id, EATING);
-    usleep(data->time_to_eat * 1000);
-    pthread_mutex_lock(&data->meal_lock);
-    philo->meals_eaten++;
-    pthread_mutex_unlock(&data->meal_lock);
-}
+//     data = philo->data;
+//     precise_sleep(data->time_to_eat);
+//     print_status(data, philo->id, EATING);
+//     pthread_mutex_lock(&data->meal_lock);
+//     philo->last_meal_time = get_time();
+//     philo->meals_eaten++;
+//     pthread_mutex_unlock(&data->meal_lock);
+// }
 
 void put_down_forks(t_philo *philo)
 {
@@ -78,4 +71,19 @@ void put_down_forks(t_philo *philo)
         pthread_mutex_unlock(&data->forks[philo->right_fork_id]);
     }
 }
-        
+
+
+void eat(t_philo *philo)
+{
+    t_data *data;
+    
+    data = philo->data;
+    pthread_mutex_lock(&data->meal_lock);
+    philo->last_meal_time = get_time();
+    pthread_mutex_unlock(&data->meal_lock);
+    print_status(data, philo->id, EATING);
+    precise_sleep(data->time_to_eat);
+    pthread_mutex_lock(&data->meal_lock);
+    philo->meals_eaten++;
+    pthread_mutex_unlock(&data->meal_lock);
+}

@@ -64,11 +64,11 @@ void    print_status(t_data *data, int id, char *status)
     if (!simulation_finished(data))
     {
         current_time = get_time();
-        if (current_time != 1)
-        {
+        // if (current_time != -1)
+        // {
             printf("%lld %d %s\n",
                 time_diff(data->start_time, current_time), id, status);
-        }
+        // }
     }
     pthread_mutex_unlock(&data->write_lock);
 }

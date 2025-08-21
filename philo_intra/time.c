@@ -27,7 +27,17 @@ void precise_sleep(long long time_sleep_in_ms)
         current = get_time();
         if (current == -1 || time_diff(start, current) >= time_sleep_in_ms)
             break ;
-        usleep(50); // sleep in short for more precision    
+        usleep(500); // sleep in short for more precision    
     }
 
 }
+
+// int precise_sleep(long long time_sleep_in_ms)
+// {
+//     long long    start;
+
+//     start = get_time();
+//     while ((get_time() - start) < time_sleep_in_ms)
+//         usleep(50);
+//     return (0);
+// }
