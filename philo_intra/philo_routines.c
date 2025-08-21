@@ -24,11 +24,19 @@ void *philosopher_routine(void *arg)
             if (simulation_finished(philo->data))
                 break ;
             print_status(philo->data, philo->id, THINKING);
-            if (philo->data->num_philos % 2)
+            // if (philo->data->num_philos % 2)
+            // {
+            //     if (philo->data->time_to_eat >= philo->data->time_to_sleep)
+            //     {
+            //         think_time = philo->data->time_to_eat;
+            //         precise_sleep(think_time);
+            //     }
+            // }
+            if (philo->data->time_to_eat >= philo->data->time_to_sleep)
             {
-                if (philo->data->time_to_eat >= philo->data->time_to_sleep)
+                if (philo->data->num_philos % 2)
                 {
-                    think_time = philo->data->time_to_eat;
+                    think_time = philo->data->time_to_eat * 2 - philo->data->time_to_sleep;
                     precise_sleep(think_time);
                 }
             }

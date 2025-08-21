@@ -21,7 +21,7 @@ void *monitor_routine(void *arg)
             pthread_mutex_unlock(&data->end_lock);
             break;
         }
-        // usleep(100); /  // Check every 1ms for precision (within 10ms requirement)
+        usleep(50);   // Check every 1ms for precision (within 10ms requirement)
     }
     return (NULL);
 }
@@ -60,10 +60,10 @@ int	check_death(t_data *data)
         last_meal = data->philosophers[i].last_meal_time;
         pthread_mutex_unlock(&data->meal_lock);
         current_time = get_time();
-        time_since_meal = time_diff(last_meal, current_time) + 1;
+        time_since_meal = time_diff(last_meal, current_time);
         if (current_time == -1)
             return (1);
-        if (time_since_meal > data->time_to_die)
+        if (time_since_meal >= data->time_to_die)
         {
             printf_death(data, data->philosophers[i].id);
             return (1);
