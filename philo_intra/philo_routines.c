@@ -11,6 +11,12 @@ void *philosopher_routine(void *arg)
         print_status(philo->data, philo->id, THINKING);
         precise_sleep(philo->data->time_to_eat);
     }
+    // Odd philosophers (except philosopher 1) should also think initially
+    else if (philo->id != 1)
+    {
+        print_status(philo->data, philo->id, THINKING);
+        precise_sleep(philo->data->time_to_eat / 2); // Shorter delay than even philosophers
+    }
     while (!simulation_finished(philo->data))
     {
         if (take_forks(philo) == 0)
@@ -24,14 +30,6 @@ void *philosopher_routine(void *arg)
             if (simulation_finished(philo->data))
                 break ;
             print_status(philo->data, philo->id, THINKING);
-            // if (philo->data->num_philos % 2)
-            // {
-            //     if (philo->data->time_to_eat >= philo->data->time_to_sleep)
-            //     {
-            //         think_time = philo->data->time_to_eat;
-            //         precise_sleep(think_time);
-            //     }
-            // }
             if (philo->data->time_to_eat >= philo->data->time_to_sleep)
             {
                 if (philo->data->num_philos % 2)
