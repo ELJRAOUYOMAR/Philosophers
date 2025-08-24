@@ -113,7 +113,7 @@ pthread_mutex_t lock;
 int pthread_mutex_init(pthread_mutex_t *mutex,
                        const pthread_mutexattr_t *attr);
 ```
-**What it does:**
+** What it does: **
 
 1. Initializes the mutex struct:
 - Sets lock state to unlocked.
@@ -149,7 +149,7 @@ typedef union {
 ```C
 int pthread_mutex_lock(pthread_mutex_t *mutex);
 ```
-**What it does:**
+** What it does: **
 1. Fast path (no contention):
 - Atomically sets __lock from 0 → 1.
 - If successful → thread owns the lock.
@@ -177,7 +177,7 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex);
 3. If waiters exist:
 - Calls futex wake to notify waiting threads.
 
-**⚡ Performance Note**
+** ⚡ Performance Note **
 - Both lock and unlock are implemented to run in user space first with atomic operations.
 - The kernel (futex) is only involved when:
     - A thread must block (mutex already held).
@@ -185,7 +185,7 @@ int pthread_mutex_unlock(pthread_mutex_t *mutex);
 
 This design avoids unnecessary syscalls and makes uncontended locks very fast.
 
-**📌 Mutex Attributes (pthread_mutexattr_t)**
+** 📌 Mutex Attributes (pthread_mutexattr_t) **
 Examples of what you can set if you don’t pass NULL:
 - Type:
     - `PTHREAD_MUTEX_NORMAL`
@@ -211,7 +211,7 @@ pthread_mutex_t lock;
 pthread_mutex_init(&lock, &attr);
 ```
 
-**🧩 Analogy**
+** 🧩 Analogy **
 
 `pthread_mutex_lock`:
 “Grab the key. If it’s free, take it. If someone else has it, wait in line (kernel futex).”
@@ -254,4 +254,5 @@ Imagine mutex->__lock is a futex word (integer):
     - If waiters exist, call futex(FUTEX_WAKE) to wake one.
 
     - This is exactly how pthread_mutex_lock/unlock works under the hood in Linux.
+
 
