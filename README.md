@@ -223,6 +223,7 @@ Futex stands for Fast Userspace muTEX.
 It’s a Linux kernel mechanism used to implement efficient synchronization primitives (mutexes, condition variables, semaphores, etc.) in user space.
 
 ** why Futex? **
+
 Before futexes, every pthread_mutex_lock or unlock could involve a system call into the kernel — even when there was no contention. This was expensive.
 Futexes fix that by allowing:
 - Uncontended locks → handled entirely in user space (fast, no kernel overhead).
@@ -249,4 +250,5 @@ Imagine mutex->__lock is a futex word (integer):
 - Thread B (unlock):
     - Atomically set __lock = 0.
     - If waiters exist, call futex(FUTEX_WAKE) to wake one.
+
     - This is exactly how pthread_mutex_lock/unlock works under the hood in Linux.
