@@ -102,6 +102,8 @@ Example:
 
 
 ## New concepts, functions
+### Threads
+
 ### Mutex
 A `mutex` (mutual exclusion lock) ensures that only one thread at a time can access a shared resource (e.g., critical section).
 In POSIX threads (pthreads), a mutex is represented by:
@@ -254,5 +256,6 @@ Imagine mutex->__lock is a futex word (integer):
     - If waiters exist, call futex(FUTEX_WAKE) to wake one.
 
     - This is exactly how pthread_mutex_lock/unlock works under the hood in Linux.
+
 
 
