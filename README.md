@@ -99,37 +99,154 @@ A deadlock in multithreading occurs when two or more threads are unable to proce
 Example:
 - Thread 1 holds Lock A and waits for Lock B.
 - Thread 2 holds Lock B and waits for Lock A. Both threads wait indefinitely, resulting in a deadlock.
+
+
+## New concepts, functions
+### Mutex
+A `mutex` (mutual exclusion lock) ensures that only one thread at a time can access a shared resource (e.g., critical section).
+In POSIX threads (pthreads), a mutex is represented by:
 ```C
-if (philo->id % 2 == 1)
-    precise_sleep(philo->data->time_to_eat / 2);
+pthread_mutex_t lock;
 ```
-This code makes odd-numbered philosophers wait a short time before starting their routine. Here's why this is important:
-In the classic Dining Philosophers problem, if all philosophers try to grab their left fork simultaneously:
-1. Each philosopher picks up their left fork
-2. No right forks remain available for anyone
-3. Everyone is stuck holding one fork and waiting for their second fork
-4. This is a deadlock - ```no progress can be made```
+### pthraed_mutex_init
+```C
+int pthread_mutex_init(pthread_mutex_t *mutex,
+                       const pthread_mutexattr_t *attr);
+```
+**What it does:**
 
-### ```The Solution in This Code```
-By delaying odd-numbered philosophers:
-- Even-numbered philosophers start immediately and try to grab forks
-- Odd-numbered philosophers wait briefly before attempting to grab forks
-- This breaks the symmetry that could lead to deadlock
-- It staggers the fork acquisition attempts
-### ```Why Half of time_to_eat?```
-The delay is set to half of the eating time (time_to_eat / 2), which is a reasonable value because:
-- It's long enough to break synchronization
-- It's short enough not to waste too much time
-- It's proportional to the simulation's eating duration
+1. Initializes the mutex struct:
+- Sets lock state to unlocked.
+- Sets owner = none.
+- Initializes recursion count, waiters list, and other metadata.
+2. Applies attributes:
+- If attr == NULL: uses defaults.
+- If not NULL: applies custom settings (recursive, robust, priority inheritance, etc.).
+3. No kernel call normally:
+- It just writes into the pthread_mutex_t struct in user space.
+- Syscalls (via futex) only happen later when contention occurs.
+**Default behavior (NULL attributes):**
+- Type: PTHREAD_MUTEX_DEFAULT (normal, non-recursive).
+- Protocol: PTHREAD_PRIO_NONE (no priority inheritance).
+- Robustness: normal (not robust).
+- Sharing: process-private.
+**Internal struct (simplified from glibc):**
+```C
+typedef union {
+    struct {
+        int __lock;          // lock state (0 = unlocked, 1 = locked, etc.)
+        unsigned int __count; // recursion count
+        int __owner;         // thread ID of owner
+        unsigned int __nusers; // number of waiters
+        int __kind;          // mutex type
+        short __spins;       // adaptive spinning
+        short __elision;     // transactional memory (if supported)
+        __pthread_list_t __list; // robust/PI waiters
+    } __data;
+} pthread_mutex_t;
+```
+### 🔒 pthread_mutex_lock
+```C
+int pthread_mutex_lock(pthread_mutex_t *mutex);
+```
+**What it does:**
+1. Fast path (no contention):
+- Atomically sets __lock from 0 → 1.
+- If successful → thread owns the lock.
+2. If already locked (contention):
+- If recursive and owned by the same thread → increment __count.
+- If error-checking mutex and owned by the same thread → return EDEADLK.
+Otherwise → block using the futex syscall until lock is available.
+3. Owner bookkeeping:
+- Sets __owner to current thread ID.
+- Updates robust mutex list if needed.
 
-### use of same part of codes
-#### ```Why the meal_lock is Critical```
-The meal_lock mutex protects two important variables:
-- last_meal_time: Used by the monitor thread to check for starvation
-- meals_eaten: Used to track when all philosophers have eaten enough
-```Without this mutex:```
-The monitor thread might read a partially updated timestamp
-The check for "all philosophers have eaten enough" could be incorrect
-These race conditions could lead to missed starvation events or premature simulation ending
+### 🔓 pthread_mutex_unlock
+```C
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+```
+1. What it does:
+- Ownership check:
+- Normal mutex: unlocking by non-owner = undefined behavior.
+- Error-checking mutex: returns EPERM if non-owner tries.
+2. Recursive mutex case:
+- If __count > 0, just decrements recursion counter, keeps lock held.
+- Fast path (no waiters):
+- Atomically sets __lock = 0.
+- Clears __owner and __count.
+3. If waiters exist:
+- Calls futex wake to notify waiting threads.
 
-```The mutex ensures these operations are atomic and properly synchronized with any threads that might be reading these values.```
+**⚡ Performance Note**
+- Both lock and unlock are implemented to run in user space first with atomic operations.
+- The kernel (futex) is only involved when:
+    - A thread must block (mutex already held).
+    - A thread must be woken up (unlock with waiters).
+
+This design avoids unnecessary syscalls and makes uncontended locks very fast.
+
+**📌 Mutex Attributes (pthread_mutexattr_t)**
+Examples of what you can set if you don’t pass NULL:
+- Type:
+    - `PTHREAD_MUTEX_NORMAL`
+    - `PTHREAD_MUTEX_RECURSIVE`
+    - `PTHREAD_MUTEX_ERRORCHECK`
+    - Robustness:
+    - `PTHREAD_MUTEX_STALLED` (default)
+    - `PTHREAD_MUTEX_ROBUST`
+- Protocol:
+    - `PTHREAD_PRIO_NONE` (default)
+    - `PTHREAD_PRIO_INHERIT`
+    - `PTHREAD_PRIO_PROTECT`
+- Sharing:
+    - `PTHREAD_PROCESS_PRIVATE` (default)
+    - `PTHREAD_PROCESS_SHARED`
+example
+```C
+pthread_mutexattr_t attr;
+pthread_mutexattr_init(&attr);
+pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+pthread_mutex_t lock;
+pthread_mutex_init(&lock, &attr);
+```
+
+**🧩 Analogy**
+
+`pthread_mutex_lock`:
+“Grab the key. If it’s free, take it. If someone else has it, wait in line (kernel futex).”
+`pthread_mutex_unlock`:
+“Put the key back. If people are waiting, wake one of them so they can take it.”
+
+### Futex
+Futex stands for Fast Userspace muTEX.
+It’s a Linux kernel mechanism used to implement efficient synchronization primitives (mutexes, condition variables, semaphores, etc.) in user space.
+
+** why Futex? **
+Before futexes, every pthread_mutex_lock or unlock could involve a system call into the kernel — even when there was no contention. This was expensive.
+Futexes fix that by allowing:
+- Uncontended locks → handled entirely in user space (fast, no kernel overhead).
+- Contended locks → only then, threads go into the kernel to sleep/wake.
+So most locks/unlocks are just a few atomic instructions in user space.
+The kernel is only used as a fallback.
+
+** How it works **
+A futex is basically a 32-bit integer in user space that multiple threads can read/write atomically.
+There are two main operations via the futex syscall:
+1. Wait (block):
+- futex(&addr, FUTEX_WAIT, expected_value, ...)
+- Thread sleeps if the value at addr still equals expected_value.
+2. Wake (unblock):
+- futex(&addr, FUTEX_WAKE, n, ...)
+- Wake up up to n threads waiting on that futex word.
+
+** 🔒 Example: Mutex with futex **
+Imagine mutex->__lock is a futex word (integer):
+- Thread A (lock):
+    - Atomically change 0 → 1.
+    - Success? Lock acquired (user space only).
+    - Fail? Call futex(FUTEX_WAIT) to sleep until it becomes 0.
+- Thread B (unlock):
+    - Atomically set __lock = 0.
+    - If waiters exist, call futex(FUTEX_WAKE) to wake one.
+    - This is exactly how pthread_mutex_lock/unlock works under the hood in Linux.
