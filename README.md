@@ -232,6 +232,7 @@ So most locks/unlocks are just a few atomic instructions in user space.
 The kernel is only used as a fallback.
 
 ** How it works **
+
 A futex is basically a 32-bit integer in user space that multiple threads can read/write atomically.
 There are two main operations via the futex syscall:
 1. Wait (block):
@@ -242,6 +243,7 @@ There are two main operations via the futex syscall:
 - Wake up up to n threads waiting on that futex word.
 
 ** 🔒 Example: Mutex with futex **
+
 Imagine mutex->__lock is a futex word (integer):
 - Thread A (lock):
     - Atomically change 0 → 1.
@@ -252,3 +254,4 @@ Imagine mutex->__lock is a futex word (integer):
     - If waiters exist, call futex(FUTEX_WAKE) to wake one.
 
     - This is exactly how pthread_mutex_lock/unlock works under the hood in Linux.
+
